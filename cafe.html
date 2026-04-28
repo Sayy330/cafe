@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Daily Grind | Aesthetic Cafe Experience</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    
+    <style>
+        html { scroll-behavior: smooth; }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            overflow-x: hidden;
+            background-color: #FDFCFB;
+            color: #2C1810;
+        }
+        .font-serif { font-family: 'Playfair Display', serif; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #5E3B24; border-radius: 10px; }
+
+        /* Progress Bar */
+        #progress-bar {
+            position: fixed; top: 0; left: 0; height: 3px;
+            background: linear-gradient(to right, #783F04, #D97706);
+            z-index: 1000; width: 0%; transition: width 0.1s;
+        }
+
+        /* Hero Parallax */
+        .hero-bg {
+            background: linear-gradient(rgba(44, 24, 16, 0.6), rgba(44, 24, 16, 0.6)), 
+                        url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=1920');
+            background-size: cover; background-position: center; background-attachment: fixed;
+        }
+        @media (max-width: 1024px) { .hero-bg { background-attachment: scroll; } }
+
+        /* Navigation */
+        .glass-nav { 
+            background: rgba(255, 255, 255, 0.8); 
+            backdrop-filter: blur(15px); 
+            -webkit-backdrop-filter: blur(15px);
+        }
+        .nav-link { position: relative; transition: color 0.3s; }
+        .nav-link::after {
+            content: ''; position: absolute; width: 0; height: 2px;
+            bottom: -4px; left: 0; background-color: #783F04; transition: width 0.3s;
+        }
+        .nav-link:hover::after { width: 100%; }
+
+        /* Menu Card Styles */
+        .image-container {
+            position: relative; overflow: hidden; border-radius: 1.5rem; 
+            cursor: pointer; height: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+        .image-container img {
+            width: 100%; height: 100%; object-fit: cover; 
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .image-container:hover img { transform: scale(1.1); filter: brightness(0.8); }
+
+        .overlay {
+            position: absolute; inset: 0; background: rgba(0,0,0,0.2);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .image-container:hover .overlay { opacity: 1; }
+        .overlay span {
+            color: white; border: 1px solid white; padding: 0.5rem 1.5rem;
+            border-radius: 99px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;
+        }
+
+        /* Back to Top */
+        #toTop {
+            position: fixed; bottom: 24px; right: 24px; z-index: 50;
+            background: #2C1810; color: white; padding: 12px;
+            border-radius: 50%; opacity: 0; transition: 0.3s; pointer-events: none;
+        }
+
+        /* Mobile Menu */
+        #mobile-menu { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; }
+        #mobile-menu.active { max-height: 300px; }
+    </style>
+</head>
+<body>
+
+    <div id="progress-bar"></div>
+
+    <a href="https://wa.me/628123456789" target="_blank" class="fixed bottom-6 left-6 z-50 bg-green-600 text-white p-4 rounded-full shadow-lg hover:scale-110 transition-transform">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+    </a>
+
+    <button id="toTop">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+        </svg>
+    </button>
+
+    <nav class="fixed w-full z-[100] glass-nav border-b border-stone-200/50">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-xl md:text-2xl font-serif font-bold tracking-tight text-[#5E3B24]">Coffee Time.</a>
+            
+            <div class="hidden md:flex space-x-10 text-xs font-bold uppercase tracking-widest text-[#5E3B24]/70">
+                <a href="#home" class="nav-link">Home</a>
+                <a href="#menu" class="nav-link">Menu</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </div>
+
+            <button id="menu-btn" class="md:hidden text-[#5E3B24] focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </div>
+
+        <div id="mobile-menu" class="bg-white border-b border-stone-200 md:hidden">
+            <div class="flex flex-col space-y-4 p-6 text-center font-bold uppercase tracking-widest text-sm">
+                <a href="#home" class="mobile-link py-2">Home</a>
+                <a href="#menu" class="mobile-link py-2">Menu</a>
+                <a href="#about" class="mobile-link py-2">About</a>
+                <a href="#contact" class="mobile-link py-2">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <section id="home" class="h-screen flex items-center justify-center text-center text-white hero-bg px-6">
+        <div data-aos="fade-up">
+            <span class="uppercase tracking-[0.4em] text-[10px] md:text-xs mb-4 block text-amber-200 font-bold">Established 2026</span>
+            <h1 class="text-5xl md:text-8xl font-serif mb-6 italic leading-tight">Aroma & Ketenangan.</h1>
+            <p class="text-sm md:text-xl mb-10 font-light max-w-xl mx-auto opacity-90">
+                Temukan ruang ternyaman untuk bekerja atau berbagi cerita.
+            </p>
+            <a href="#menu" class="bg-amber-800 text-white px-10 py-4 rounded-full inline-block font-bold text-xs tracking-[0.2em] hover:scale-105 transition-transform shadow-xl">
+                JELAJAHI MENU
+            </a>
+        </div>
+    </section>
+
+    <section id="menu" class="py-24 max-w-6xl mx-auto px-6">
+        <div class="text-center mb-20" data-aos="fade-up">
+            <h2 class="text-4xl md:text-5xl font-serif mb-4 text-amber-950">Our Signature</h2>
+            <p class="text-stone-500 text-sm tracking-widest uppercase">Dipilih dengan penuh cinta</p>
+            <div class="w-16 h-[2px] bg-amber-800 mx-auto mt-6"></div>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12">
+            <div class="menu-card group" data-aos="fade-up" data-aos-delay="100">
+                <div class="image-container" onclick="openCheckout('Sea Salt Latte', 35000)">
+                    <img src="https://images.unsplash.com/photo-1541167760496-162955ed8a9f?auto=format&fit=crop&q=80&w=600">
+                    <div class="overlay"><span>Pesan Sekarang</span></div>
+                </div>
+                <div class="flex justify-between items-baseline mb-2 mt-6">
+                    <h3 class="text-2xl font-serif italic text-amber-950">Sea Salt Latte</h3>
+                    <span class="text-amber-800 font-bold">35k</span>
+                </div>
+                <p class="text-stone-500 text-sm italic">Espresso kental dengan sea salt foam lembut.</p>
+            </div>
+
+            <div class="menu-card group" data-aos="fade-up" data-aos-delay="200">
+                <div class="image-container" onclick="openCheckout('Cold Brew Honey', 38000)">
+                    <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=600">
+                    <div class="overlay"><span>Pesan Sekarang</span></div>
+                </div>
+                <div class="flex justify-between items-baseline mb-2 mt-6">
+                    <h3 class="text-2xl font-serif italic text-amber-950">Cold Brew Honey</h3>
+                    <span class="text-amber-800 font-bold">38k</span>
+                </div>
+                <p class="text-stone-500 text-sm italic">Seduhan dingin 12 jam dengan madu hutan.</p>
+            </div>
+
+            <div class="menu-card group" data-aos="fade-up" data-aos-delay="300">
+                <div class="image-container" onclick="openCheckout('Almond Croissant', 28000)">
+                    <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=600">
+                    <div class="overlay"><span>Pesan Sekarang</span></div>
+                </div>
+                <div class="flex justify-between items-baseline mb-2 mt-6">
+                    <h3 class="text-2xl font-serif italic text-amber-950">Almond Croissant</h3>
+                    <span class="text-amber-800 font-bold">28k</span>
+                </div>
+                <p class="text-stone-500 text-sm italic">Pastry renyah dengan isian krim almond.</p>
+            </div>
+        </div>
+    </section>
+
+    <div id="checkout-modal" class="fixed inset-0 z-[150] hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeCheckout()"></div>
+        <div class="relative bg-white w-full max-w-md rounded-[2rem] p-8 shadow-2xl transition-all scale-95 overflow-y-auto max-h-[90vh]" id="modal-content">
+            <h2 class="text-3xl font-serif mb-6 text-amber-900 italic text-center">Checkout</h2>
+            
+            <div id="order-summary" class="mb-6 border-b border-stone-100 pb-4 text-center">
+                </div>
+
+            <div id="qris-area" class="mb-8 text-center bg-stone-50 p-4 rounded-2xl border border-stone-100">
+                <p class="text-[10px] uppercase font-bold text-stone-400 mb-3 tracking-widest">Pindai QRIS untuk membayar</p>
+                <div class="flex justify-center">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=TheDailyGrindCafePayment" 
+                         alt="QRIS Payment" 
+                         class="w-48 h-48 object-contain shadow-sm bg-white p-2 rounded-lg">
+                </div>
+            </div>
+
+            <form id="payment-form" class="space-y-4">
+                <div>
+                    <label class="text-[10px] uppercase font-bold text-stone-400 block mb-1">Nama Pemesan</label>
+                    <input type="text" required class="w-full border-b border-stone-200 py-2 outline-none focus:border-amber-800 transition-colors bg-transparent">
+                </div>
+                <div>
+                    <label class="text-[10px] uppercase font-bold text-stone-400 block mb-1">Metode Bayar</label>
+                    <select class="w-full border-b border-stone-200 py-2 outline-none focus:border-amber-800 bg-transparent">
+                        <option>QRIS / E-Wallet</option>
+                        <option>Transfer Bank</option>
+                        <option>Bayar di Kasir</option>
+                    </select>
+                </div>
+                <button type="submit" id="btn-pay" class="w-full bg-amber-900 text-white py-4 rounded-full font-bold text-xs tracking-widest mt-6 hover:bg-amber-800 shadow-lg transition-colors">
+                    KONFIRMASI PEMBAYARAN
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <section id="about" class="py-24 bg-[#F4F1EE]">
+        <div class="max-w-4xl mx-auto px-6 text-center" data-aos="fade-up">
+            <h2 class="text-3xl md:text-5xl font-serif mb-8 text-amber-950 italic">Dibuat dari hati.</h2>
+            <p class="text-stone-600 leading-loose text-lg font-light">
+                Di The Daily Grind, kami percaya bahwa setiap cangkir kopi adalah awal dari sebuah cerita. Kami menyediakan biji kopi terbaik nusantara dalam suasana yang menenangkan.
+            </p>
+        </div>
+    </section>
+
+    <footer id="contact" class="py-12 border-t border-stone-200 text-center bg-white px-6">
+        <div class="mb-8 flex justify-center space-x-6 text-[#5E3B24] font-bold text-xs uppercase tracking-widest">
+            <a href="#" class="hover:text-amber-800">Instagram</a>
+            <a href="#" class="hover:text-amber-800">Twitter</a>
+            <a href="#" class="hover:text-amber-800">Maps</a>
+        </div>
+        <p class="text-[10px] text-stone-400 tracking-[0.3em] uppercase font-bold">
+            &copy; 2026 The Daily Grind. Built with Soul & Coffee.
+        </p>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ once: true, duration: 1000 });
+
+        // Scroll Logic
+        window.addEventListener('scroll', () => {
+            const winScroll = document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            
+            document.getElementById("progress-bar").style.width = scrolled + "%";
+
+            const toTop = document.getElementById('toTop');
+            if (winScroll > 600) {
+                toTop.style.opacity = "1";
+                toTop.style.pointerEvents = "auto";
+            } else {
+                toTop.style.opacity = "0";
+                toTop.style.pointerEvents = "none";
+            }
+        });
+
+        document.getElementById('toTop').addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Mobile Menu
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('active'));
+
+        document.querySelectorAll('.mobile-link').forEach(link => {
+            link.addEventListener('click', () => mobileMenu.classList.remove('active'));
+        });
+
+        // Checkout Logic
+        function openCheckout(name, price, quantity = 1) {
+            const modal = document.getElementById('checkout-modal');
+            const summary = document.getElementById('order-summary');
+            const content = document.getElementById('modal-content');
+
+            summary.innerHTML = `
+                <p class="text-xs text-stone-400 uppercase tracking-widest mb-1">Konfirmasi Pesanan</p>
+                <h4 class="text-2xl font-serif text-amber-950 italic">${name}</h4>
+                <div class="flex justify-between items-center mt-2 mb-2">
+                    <label class="text-sm text-stone-600">Quantity:</label>
+                    <input type="number" id="quantity-input" value="${quantity}" min="1" class="w-16 text-center border border-stone-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                </div>
+                <p class="text-3xl font-bold text-amber-800 mt-2" id="total-price">${price * quantity}k</p>
+            `;
+
+            modal.classList.remove('hidden');
+            setTimeout(() => content.classList.replace('scale-95', 'scale-100'), 10);
+
+            // Update total on quantity change
+            document.getElementById('quantity-input').addEventListener('input', function() {
+                const qty = parseInt(this.value) || 1;
+                document.getElementById('total-price').innerText = (price * qty) + 'k';
+            });
+        }
+
+        function closeCheckout() {
+            const modal = document.getElementById('checkout-modal');
+            const content = document.getElementById('modal-content');
+            content.classList.replace('scale-100', 'scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 200);
+        }
+
+        // Handle Payment Submit
+        document.getElementById('payment-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-pay');
+            const originalText = btn.innerText;
+            
+            btn.innerText = "SEDANG MEMPROSES...";
+            btn.disabled = true;
+
+            setTimeout(() => {
+                alert("Pembayaran Berhasil! ✨\nBarista kami sedang menyiapkan pesanan Anda.");
+                closeCheckout();
+                btn.innerText = originalText;
+                btn.disabled = false;
+                e.target.reset();
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
